@@ -35,6 +35,8 @@ pub const WGL_ALPHA_BITS_ARB: GLint = 0x201B;
 pub const WGL_DEPTH_BITS_ARB: GLint = 0x2022;
 pub const WGL_STENCIL_BITS_ARB: GLint = 0x2023;
 
+pub const WGL_NO_ACCELERATION_ARB: GLint = 0x2025;
+pub const WGL_GENERIC_ACCELERATION_ARB: GLint = 0x2026;
 pub const WGL_FULL_ACCELERATION_ARB: GLint = 0x2027;
 pub const WGL_TYPE_RGBA_ARB: GLint = 0x202B;
 
