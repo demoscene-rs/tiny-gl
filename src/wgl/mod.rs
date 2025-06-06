@@ -90,10 +90,12 @@ bitflags! {
     }
 }
 
-///
+/// Various attributes that can be used in creating a context or choosing a pixel format.
 #[derive(Copy, Clone, PartialEq, Eq)]
 #[repr(C, i32)]
 pub enum IntegerAttribute {
+    End = 0,
+
     DrawToWindow(IntegerBool) = ffi::WGL_DRAW_TO_WINDOW_ARB,
     SupportOpenGL(IntegerBool) = ffi::WGL_SUPPORT_OPENGL_ARB,
     DoubleBuffer(IntegerBool) = ffi::WGL_DOUBLE_BUFFER_ARB,
@@ -105,11 +107,12 @@ pub enum IntegerAttribute {
     StencilBits(i32) = ffi::WGL_STENCIL_BITS_ARB,
     SampleBuffers(IntegerBool) = ffi::WGL_SAMPLE_BUFFERS_ARB,
     Samples(i32) = ffi::WGL_SAMPLES_ARB,
+
+    //TODO Split these off into their own enum
     ContextMajorVersion(i32) = ffi::WGL_CONTEXT_MAJOR_VERSION_ARB,
     ContextMinorVersion(i32) = ffi::WGL_CONTEXT_MINOR_VERSION_ARB,
     ContextProfileMask(ProfileMask) = ffi::WGL_CONTEXT_PROFILE_MASK_ARB,
     ContextFlags(ContextFlags) = ffi::WGL_CONTEXT_FLAGS_ARB,
-    End,
 }
 
 fn validate_integer_attributes(attributes: &[IntegerAttribute]) {
