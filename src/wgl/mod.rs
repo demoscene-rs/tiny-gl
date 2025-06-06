@@ -21,10 +21,10 @@ pub unsafe fn swap_interval(interval: i32) -> bool {
 pub unsafe fn create_context_attributes(
     hdc: HDC,
     share_context: Option<HGLRC>,
-    integer_attributes: &[IntegerAttribute],
+    integer_attributes: &[ContextAttribute],
 ) -> Option<HGLRC> {
     #[cfg(debug_assertions)]
-    validate_integer_attributes(integer_attributes);
+    ContextAttribute::validate(integer_attributes);
 
     let share_context = share_context.map_or(core::ptr::null_mut(), NonNull::as_ptr);
 
@@ -90,10 +90,10 @@ bitflags! {
     }
 }
 
-/// Various attributes that can be used in creating a context or choosing a pixel format.
+/// Various attributes that can be used in choosing a pixel format.
 #[derive(Copy, Clone, PartialEq, Eq)]
 #[repr(C, i32)]
-pub enum IntegerAttribute {
+pub enum PixelFormatAttribute {
     End = 0,
 
     DrawToWindow(IntegerBool) = ffi::WGL_DRAW_TO_WINDOW_ARB,
@@ -107,23 +107,45 @@ pub enum IntegerAttribute {
     StencilBits(i32) = ffi::WGL_STENCIL_BITS_ARB,
     SampleBuffers(IntegerBool) = ffi::WGL_SAMPLE_BUFFERS_ARB,
     Samples(i32) = ffi::WGL_SAMPLES_ARB,
-
-    //TODO Split these off into their own enum
-    ContextMajorVersion(i32) = ffi::WGL_CONTEXT_MAJOR_VERSION_ARB,
-    ContextMinorVersion(i32) = ffi::WGL_CONTEXT_MINOR_VERSION_ARB,
-    ContextProfileMask(ProfileMask) = ffi::WGL_CONTEXT_PROFILE_MASK_ARB,
-    ContextFlags(ContextFlags) = ffi::WGL_CONTEXT_FLAGS_ARB,
 }
 
-fn validate_integer_attributes(attributes: &[IntegerAttribute]) {
-    if attributes.is_empty() {
-        panic!("IntegerAttributes list is empty")
+impl PixelFormatAttribute {
+    fn validate(attributes: &[Self]) {
+        if attributes.is_empty() {
+            panic!("IntegerAttributes list is empty")
+        }
+
+        let last = unsafe { *attributes.last().unwrap_unchecked() };
+
+        if last != Self::End {
+            panic!("IntegerAttributes list does not end with IntegerAttribute::End")
+        }
     }
+}
 
-    let last = unsafe { *attributes.last().unwrap_unchecked() };
+/// Various attributes that can be used in creating a context.
+#[derive(Copy, Clone, PartialEq, Eq)]
+#[repr(C, i32)]
+pub enum ContextAttribute {
+    End = 0,
 
-    if last != IntegerAttribute::End {
-        panic!("IntegerAttributes list does not end with IntegerAttribute::End")
+    MajorVersion(i32) = ffi::WGL_CONTEXT_MAJOR_VERSION_ARB,
+    MinorVersion(i32) = ffi::WGL_CONTEXT_MINOR_VERSION_ARB,
+    ProfileMask(ProfileMask) = ffi::WGL_CONTEXT_PROFILE_MASK_ARB,
+    Flags(ContextFlags) = ffi::WGL_CONTEXT_FLAGS_ARB,
+}
+
+impl ContextAttribute {
+    fn validate(attributes: &[Self]) {
+        if attributes.is_empty() {
+            panic!("IntegerAttributes list is empty")
+        }
+
+        let last = unsafe { *attributes.last().unwrap_unchecked() };
+
+        if last != Self::End {
+            panic!("IntegerAttributes list does not end with IntegerAttribute::End")
+        }
     }
 }
 
@@ -135,13 +157,13 @@ fn validate_integer_attributes(attributes: &[IntegerAttribute]) {
 /// Make sure that integer_attributes is not empty and ends with IntegerAttribute::End.
 pub unsafe fn choose_pixel_format(
     hdc: HDC,
-    integer_attributes: &[IntegerAttribute],
+    integer_attributes: &[PixelFormatAttribute],
     max_formats: u32,
     pixel_format: &mut i32,
     num_formats: &mut u32,
 ) -> bool {
     #[cfg(debug_assertions)]
-    validate_integer_attributes(integer_attributes);
+    PixelFormatAttribute::validate(integer_attributes);
 
     ffi::wglChoosePixelFormatARB(
         hdc.as_ptr(),
