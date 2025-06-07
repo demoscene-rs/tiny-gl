@@ -3,40 +3,6 @@ use core::{ffi::c_void, ptr::NonNull};
 
 pub mod ffi;
 
-/// Set the swap interval.
-/// See https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/refs/heads/main/extensions/EXT/WGL_EXT_swap_control.txt
-///
-/// # Notes
-/// This wraps [`ffi::wglSwapIntervalEXT`].
-pub unsafe fn swap_interval(interval: i32) -> bool {
-    ffi::wglSwapIntervalEXT(interval)
-}
-
-/// Create a new OpenGL context with the given attributes.
-/// See https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/refs/heads/main/extensions/ARB/WGL_ARB_create_context.txt
-///
-/// # Notes
-/// This wraps [`ffi::wglCreateContextAttribsARB`].
-/// Make sure that integer_attributes is not empty and ends with IntegerAttribute::End.
-pub unsafe fn create_context_attributes(
-    hdc: HDC,
-    share_context: Option<HGLRC>,
-    integer_attributes: &[ContextAttribute],
-) -> Option<HGLRC> {
-    #[cfg(debug_assertions)]
-    ContextAttribute::validate(integer_attributes);
-
-    let share_context = share_context.map_or(core::ptr::null_mut(), NonNull::as_ptr);
-
-    let context = ffi::wglCreateContextAttribsARB(
-        hdc.as_ptr(),
-        share_context,
-        integer_attributes.as_ptr() as _,
-    );
-
-    NonNull::new(context)
-}
-
 pub type HDC = NonNull<c_void>;
 pub type HGLRC = NonNull<c_void>;
 
@@ -147,6 +113,40 @@ impl ContextAttribute {
             panic!("IntegerAttributes list does not end with IntegerAttribute::End")
         }
     }
+}
+
+/// Set the swap interval.
+/// See https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/refs/heads/main/extensions/EXT/WGL_EXT_swap_control.txt
+///
+/// # Notes
+/// This wraps [`ffi::wglSwapIntervalEXT`].
+pub unsafe fn swap_interval(interval: i32) -> bool {
+    ffi::wglSwapIntervalEXT(interval)
+}
+
+/// Create a new OpenGL context with the given attributes.
+/// See https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/refs/heads/main/extensions/ARB/WGL_ARB_create_context.txt
+///
+/// # Notes
+/// This wraps [`ffi::wglCreateContextAttribsARB`].
+/// Make sure that integer_attributes is not empty and ends with IntegerAttribute::End.
+pub unsafe fn create_context_attributes(
+    hdc: HDC,
+    share_context: Option<HGLRC>,
+    integer_attributes: &[ContextAttribute],
+) -> Option<HGLRC> {
+    #[cfg(debug_assertions)]
+    ContextAttribute::validate(integer_attributes);
+
+    let share_context = share_context.map_or(core::ptr::null_mut(), NonNull::as_ptr);
+
+    let context = ffi::wglCreateContextAttribsARB(
+        hdc.as_ptr(),
+        share_context,
+        integer_attributes.as_ptr() as _,
+    );
+
+    NonNull::new(context)
 }
 
 /// Chooses a pixel format with the given attributes.
