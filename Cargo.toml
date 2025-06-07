@@ -3,7 +3,7 @@ name = "tiny-gl"
 description = """
 A set of OpenGL bindings suitable for use in a demo. This crate does not use std.
 """
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Tim Peters <mail@darksecond.nl>"]
 license = "MIT"
