@@ -3,6 +3,17 @@ use crate::types::*;
 pub const GL_FALSE: GLenum = 0;
 pub const GL_TRUE: GLenum = 1;
 
+pub const GL_DEPTH_TEST: GLenum = 0x0B71;
+
+pub const GL_NEVER: GLenum = 0x0200;
+pub const GL_LESS: GLenum = 0x0201;
+pub const GL_EQUAL: GLenum = 0x0202;
+pub const GL_LEQUAL: GLenum = 0x0203;
+pub const GL_GREATER: GLenum = 0x0204;
+pub const GL_NOTEQUAL: GLenum = 0x0205;
+pub const GL_GEQUAL: GLenum = 0x0206;
+pub const GL_ALWAYS: GLenum = 0x0207;
+
 pub const GL_TEXTURE_1D: GLenum = 0x0DE0;
 pub const GL_TEXTURE_2D: GLenum = 0x0DE1;
 pub const GL_TEXTURE_3D: GLenum = 0x806F;

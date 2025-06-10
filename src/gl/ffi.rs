@@ -271,6 +271,22 @@ pub unsafe fn glBindFramebuffer(target: GLenum, framebuffer: GLuint) {
     call_ptr_2arg(BIND_FRAMEBUFFER_PTR, target, framebuffer)
 }
 
+pub unsafe fn glEnable(cap: GLenum) {
+    call_ptr_1arg(ENABLE_PTR, cap)
+}
+
+pub unsafe fn glDisable(cap: GLenum) {
+    call_ptr_1arg(DISABLE_PTR, cap)
+}
+
+pub unsafe fn glDepthMask(flag: GLboolean) {
+    call_ptr_1arg(DEPTH_MASK_PTR, flag)
+}
+
+pub unsafe fn glDepthFunc(func: GLenum) {
+    call_ptr_1arg(DEPTH_FUNC_PTR, func)
+}
+
 static mut CREATE_SHADER_PTR: *const c_void = core::ptr::null();
 static mut SHADER_SOURCE_PTR: *const c_void = core::ptr::null();
 static mut COMPILE_SHADER_PTR: *const c_void = core::ptr::null();
@@ -310,6 +326,10 @@ static mut PROGRAM_UNIFORM_1F_PTR: *const c_void = core::ptr::null();
 static mut PROGRAM_UNIFORM_MATRIX_5FV_PTR: *const c_void = core::ptr::null();
 static mut VIEWPORT_PTR: *const c_void = core::ptr::null();
 static mut BIND_FRAMEBUFFER_PTR: *const c_void = core::ptr::null();
+static mut ENABLE_PTR: *const c_void = core::ptr::null();
+static mut DISABLE_PTR: *const c_void = core::ptr::null();
+static mut DEPTH_MASK_PTR: *const c_void = core::ptr::null();
+static mut DEPTH_FUNC_PTR: *const c_void = core::ptr::null();
 
 //TODO Implement for textures:
 // glTextureParameteri
@@ -365,4 +385,8 @@ pub unsafe fn load(get_proc_address: impl Fn(&CStr) -> *const c_void) {
     PROGRAM_UNIFORM_MATRIX_5FV_PTR = get_proc_address(c"glProgramUniformMatrix4fv");
     VIEWPORT_PTR = get_proc_address(c"glViewport");
     BIND_FRAMEBUFFER_PTR = get_proc_address(c"glBindFramebuffer");
+    ENABLE_PTR = get_proc_address(c"glEnable");
+    DISABLE_PTR = get_proc_address(c"glDisable");
+    DEPTH_MASK_PTR = get_proc_address(c"glDepthMask");
+    DEPTH_FUNC_PTR = get_proc_address(c"glDepthFunc");
 }

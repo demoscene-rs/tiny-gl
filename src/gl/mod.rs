@@ -161,6 +161,80 @@ bitflags! {
     }
 }
 
+#[derive(Copy, Clone)]
+#[repr(u32)]
+pub enum Capability {
+    DepthTest = ffi::GL_DEPTH_TEST,
+}
+
+#[derive(Copy, Clone)]
+#[repr(u32)]
+pub enum DepthFunction {
+    Never = ffi::GL_NEVER,
+    Less = ffi::GL_LESS,
+    Equal = ffi::GL_EQUAL,
+    Lequal = ffi::GL_LEQUAL,
+    Greater = ffi::GL_GREATER,
+    Notequal = ffi::GL_NOTEQUAL,
+    Gequal = ffi::GL_GEQUAL,
+    Always = ffi::GL_ALWAYS,
+}
+
+/// Sets the depth function used for depth buffer comparisons.
+/// The initial value is [`DepthFunction::Less`].
+///
+/// # Notes
+/// See [OpenGL documentation](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDepthFunc.xhtml).
+///
+/// Wraps [`ffi::glDepthFunc`].
+pub unsafe fn depth_function(func: DepthFunction) {
+    ffi::glDepthFunc(func as _);
+}
+
+/// Enables or disables writing to the depth buffer.
+///
+/// # Notes
+/// See [OpenGL documentation](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDepthMask.xhtml).
+///
+/// Wraps [`ffi::glDepthMask`].
+pub unsafe fn depth_mask(flag: bool) {
+    ffi::glDepthMask(flag as _);
+}
+
+/// Enables or disables depth testing.
+///
+/// # Notes
+/// See [OpenGL documentation](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glEnable.xhtml).
+///
+/// Wraps [`ffi::glEnable`] and [`ffi::glDisable`].
+pub unsafe fn depth_test(value: bool) {
+    if value {
+        enable(Capability::DepthTest);
+    } else {
+        disable(Capability::DepthTest);
+    }
+}
+
+/// Enables a GL capability.
+///
+/// # Notes
+/// See [OpenGL documentation](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glEnable.xhtml).
+///
+/// Wraps [`ffi::glEnable`].
+pub unsafe fn enable(capability: Capability) {
+    ffi::glEnable(capability as _);
+}
+
+/// Disables a GL capability.
+///
+/// # Notes
+/// See [OpenGL documentation](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glEnable.xhtml).
+///
+/// Wraps [`ffi::glDisable`].
+pub unsafe fn disable(capability: Capability) {
+    ffi::glDisable(capability as _);
+}
+
 pub unsafe fn create_shader(ty: ShaderType) -> Option<Shader> {
     NonZeroU32::new(ffi::glCreateShader(ty as _)).map(Shader)
 }
