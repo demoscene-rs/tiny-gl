@@ -2,8 +2,8 @@
 
 mod enums;
 
-use core::ffi::{c_void, CStr};
 use crate::utils::*;
+use core::ffi::{c_void, CStr};
 
 pub use crate::types::*;
 pub use enums::*;
@@ -12,7 +12,12 @@ pub unsafe fn glCreateShader(ty: GLenum) -> GLuint {
     call_ptr_1arg(CREATE_SHADER_PTR, ty)
 }
 
-pub unsafe fn glShaderSource(shader: GLuint, count: GLsizei, string: *const *const GLchar, length: *const GLint) {
+pub unsafe fn glShaderSource(
+    shader: GLuint,
+    count: GLsizei,
+    string: *const *const GLchar,
+    length: *const GLint,
+) {
     call_ptr_4arg(SHADER_SOURCE_PTR, shader, count, string, length)
 }
 
@@ -28,8 +33,19 @@ pub unsafe fn glGetShaderiv(shader: GLuint, pname: GLenum, params: *mut GLint) {
     call_ptr_3arg(GET_SHADER_IV_PTR, shader, pname, params)
 }
 
-pub unsafe fn glGetShaderInfoLog(shader: GLuint, max_length: GLsizei, length: *mut GLsizei, info_log: *mut GLchar) {
-    call_ptr_4arg(GET_SHADER_INFO_LOG_PTR, shader, max_length, length, info_log)
+pub unsafe fn glGetShaderInfoLog(
+    shader: GLuint,
+    max_length: GLsizei,
+    length: *mut GLsizei,
+    info_log: *mut GLchar,
+) {
+    call_ptr_4arg(
+        GET_SHADER_INFO_LOG_PTR,
+        shader,
+        max_length,
+        length,
+        info_log,
+    )
 }
 
 pub unsafe fn glCreateProgram() -> GLuint {
@@ -48,8 +64,19 @@ pub unsafe fn glGetProgramiv(program: GLuint, pname: GLenum, params: *mut GLint)
     call_ptr_3arg(GET_PROGRAM_IV_PTR, program, pname, params)
 }
 
-pub unsafe fn glGetProgramInfoLog(program: GLuint, max_length: GLsizei, length: *mut GLsizei, info_log: *mut GLchar) {
-    call_ptr_4arg(GET_PROGRAM_INFO_LOG_PTR, program, max_length, length, info_log)
+pub unsafe fn glGetProgramInfoLog(
+    program: GLuint,
+    max_length: GLsizei,
+    length: *mut GLsizei,
+    info_log: *mut GLchar,
+) {
+    call_ptr_4arg(
+        GET_PROGRAM_INFO_LOG_PTR,
+        program,
+        max_length,
+        length,
+        info_log,
+    )
 }
 
 pub unsafe fn glDeleteProgram(program: GLuint) {
@@ -64,7 +91,12 @@ pub unsafe fn glCreateBuffers(n: GLsizei, buffers: *mut GLuint) {
     call_ptr_2arg(CREATE_BUFFERS_PTR, n, buffers)
 }
 
-pub unsafe fn glNamedBufferData(buffer: GLuint, size: GLsizeiptr, data: *const c_void, usage: GLenum) {
+pub unsafe fn glNamedBufferData(
+    buffer: GLuint,
+    size: GLsizeiptr,
+    data: *const c_void,
+    usage: GLenum,
+) {
     call_ptr_4arg(NAMED_BUFFER_DATA_PTR, buffer, size, data, usage)
 }
 
@@ -76,8 +108,21 @@ pub unsafe fn glCreateVertexArrays(n: GLsizei, arrays: *mut GLuint) {
     call_ptr_2arg(CREATE_VERTEX_ARRAYS_PTR, n, arrays)
 }
 
-pub unsafe fn glVertexArrayVertexBuffer(vaobj: GLuint, bindingindex: GLuint, buffer: GLuint, offset: GLintptr, stride: GLsizei) {
-    call_ptr_5arg(VERTEX_ARRAY_VERTEX_BUFFER_PTR, vaobj, bindingindex, buffer, offset, stride)
+pub unsafe fn glVertexArrayVertexBuffer(
+    vaobj: GLuint,
+    bindingindex: GLuint,
+    buffer: GLuint,
+    offset: GLintptr,
+    stride: GLsizei,
+) {
+    call_ptr_5arg(
+        VERTEX_ARRAY_VERTEX_BUFFER_PTR,
+        vaobj,
+        bindingindex,
+        buffer,
+        offset,
+        stride,
+    )
 }
 
 pub unsafe fn glVertexArrayElementBuffer(vaobj: GLuint, buffer: GLuint) {
@@ -88,19 +133,44 @@ pub unsafe fn glEnableVertexArrayAttrib(vaobj: GLuint, index: GLuint) {
     call_ptr_2arg(ENABLE_VERTEX_ARRAY_ATTRIB_PTR, vaobj, index)
 }
 
-pub unsafe fn glVertexArrayAttribFormat(vaobj: GLuint, attribindex: GLuint, size: GLint, ty: GLenum, normalized: GLboolean, relativeoffset: GLuint) {
-    call_ptr_6arg(VERTEX_ARRAY_ATTRIB_FORMAT_PTR, vaobj, attribindex, size, ty, normalized, relativeoffset)
+pub unsafe fn glVertexArrayAttribFormat(
+    vaobj: GLuint,
+    attribindex: GLuint,
+    size: GLint,
+    ty: GLenum,
+    normalized: GLboolean,
+    relativeoffset: GLuint,
+) {
+    call_ptr_6arg(
+        VERTEX_ARRAY_ATTRIB_FORMAT_PTR,
+        vaobj,
+        attribindex,
+        size,
+        ty,
+        normalized,
+        relativeoffset,
+    )
 }
 
 pub unsafe fn glVertexArrayAttribBinding(vaobj: GLuint, attribindex: GLuint, bindingindex: GLuint) {
-    call_ptr_3arg(VERTEX_ARRAY_ATTRIB_BINDING_PTR, vaobj, attribindex, bindingindex)
+    call_ptr_3arg(
+        VERTEX_ARRAY_ATTRIB_BINDING_PTR,
+        vaobj,
+        attribindex,
+        bindingindex,
+    )
 }
 
 pub unsafe fn glDeleteVertexArrays(n: GLsizei, arrays: *const GLuint) {
     call_ptr_2arg(DELETE_VERTEX_ARRAYS_PTR, n, arrays)
 }
 
-pub unsafe fn glNamedBufferStorage(buffer: GLuint, size: GLsizeiptr, data: *const c_void, flags: GLbitfield) {
+pub unsafe fn glNamedBufferStorage(
+    buffer: GLuint,
+    size: GLsizeiptr,
+    data: *const c_void,
+    flags: GLbitfield,
+) {
     call_ptr_4arg(NAMED_BUFFER_STORAGE_PTR, buffer, size, data, flags)
 }
 
@@ -112,8 +182,21 @@ pub unsafe fn glDeleteTextures(n: GLsizei, textures: *const GLuint) {
     call_ptr_2arg(DELETE_TEXTURES_PTR, n, textures)
 }
 
-pub unsafe fn glTextureStorage2D(texture: GLuint, levels: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei) {
-    call_ptr_5arg(TEXTURE_STORAGE_2D_PTR, texture, levels, internalformat, width, height)
+pub unsafe fn glTextureStorage2D(
+    texture: GLuint,
+    levels: GLsizei,
+    internalformat: GLenum,
+    width: GLsizei,
+    height: GLsizei,
+) {
+    call_ptr_5arg(
+        TEXTURE_STORAGE_2D_PTR,
+        texture,
+        levels,
+        internalformat,
+        width,
+        height,
+    )
 }
 
 pub unsafe fn glCreateFramebuffers(n: GLsizei, framebuffers: *mut GLuint) {
@@ -124,8 +207,19 @@ pub unsafe fn glDeleteFramebuffers(n: GLsizei, framebuffers: *const GLuint) {
     call_ptr_2arg(DELETE_FRAMEBUFFERS_PTR, n, framebuffers)
 }
 
-pub unsafe fn glNamedFramebufferTexture(framebuffer: GLuint, attachment: GLenum, texture: GLuint, level: GLint) {
-    call_ptr_4arg(NAMED_FRAMEBUFFER_TEXTURE_PTR, framebuffer, attachment, texture, level)
+pub unsafe fn glNamedFramebufferTexture(
+    framebuffer: GLuint,
+    attachment: GLenum,
+    texture: GLuint,
+    level: GLint,
+) {
+    call_ptr_4arg(
+        NAMED_FRAMEBUFFER_TEXTURE_PTR,
+        framebuffer,
+        attachment,
+        texture,
+        level,
+    )
 }
 
 pub unsafe fn glUseProgram(program: GLuint) {
@@ -150,6 +244,23 @@ pub unsafe fn glGetUniformLocation(program: GLuint, name: *const GLchar) -> GLin
 
 pub unsafe fn glProgramUniform1f(program: GLuint, location: GLint, v0: GLfloat) {
     call_ptr_3arg(PROGRAM_UNIFORM_1F_PTR, program, location, v0)
+}
+
+pub unsafe fn glProgramUniformMatrix4fv(
+    program: GLuint,
+    location: GLint,
+    count: GLsizei,
+    transpose: GLboolean,
+    value: *const GLfloat,
+) {
+    call_ptr_5arg(
+        PROGRAM_UNIFORM_MATRIX_5FV_PTR,
+        program,
+        location,
+        count,
+        transpose,
+        value,
+    )
 }
 
 pub unsafe fn glViewport(x: GLint, y: GLint, width: GLsizei, height: GLsizei) {
@@ -196,6 +307,7 @@ static mut CLEAR_PTR: *const c_void = core::ptr::null();
 static mut CLEAR_COLOR_PTR: *const c_void = core::ptr::null();
 static mut GET_UNIFORM_LOCATION_PTR: *const c_void = core::ptr::null();
 static mut PROGRAM_UNIFORM_1F_PTR: *const c_void = core::ptr::null();
+static mut PROGRAM_UNIFORM_MATRIX_5FV_PTR: *const c_void = core::ptr::null();
 static mut VIEWPORT_PTR: *const c_void = core::ptr::null();
 static mut BIND_FRAMEBUFFER_PTR: *const c_void = core::ptr::null();
 
@@ -213,7 +325,7 @@ static mut BIND_FRAMEBUFFER_PTR: *const c_void = core::ptr::null();
 //TODO Others:
 // glGetError
 
-pub unsafe fn load(get_proc_address: impl Fn(&CStr)-> *const c_void) {
+pub unsafe fn load(get_proc_address: impl Fn(&CStr) -> *const c_void) {
     CREATE_SHADER_PTR = get_proc_address(c"glCreateShader");
     SHADER_SOURCE_PTR = get_proc_address(c"glShaderSource");
     COMPILE_SHADER_PTR = get_proc_address(c"glCompileShader");
@@ -250,6 +362,7 @@ pub unsafe fn load(get_proc_address: impl Fn(&CStr)-> *const c_void) {
     CLEAR_COLOR_PTR = get_proc_address(c"glClearColor");
     GET_UNIFORM_LOCATION_PTR = get_proc_address(c"glGetUniformLocation");
     PROGRAM_UNIFORM_1F_PTR = get_proc_address(c"glProgramUniform1f");
+    PROGRAM_UNIFORM_MATRIX_5FV_PTR = get_proc_address(c"glProgramUniformMatrix4fv");
     VIEWPORT_PTR = get_proc_address(c"glViewport");
     BIND_FRAMEBUFFER_PTR = get_proc_address(c"glBindFramebuffer");
 }

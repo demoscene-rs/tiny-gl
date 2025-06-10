@@ -1,5 +1,5 @@
-use core::{ffi::CStr, num::NonZeroU32};
 use bitflags::bitflags;
+use core::{ffi::CStr, num::NonZeroU32};
 
 #[cfg(feature = "alloc")]
 use alloc::string::String;
@@ -53,16 +53,40 @@ pub enum DrawMode {
 
 #[repr(u32)]
 pub enum BufferUsage {
+    /// The data store contents will be modified once and used at most a few times.
+    /// The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
     StreamDraw = ffi::GL_STREAM_DRAW,
+
+    /// The data store contents will be modified once and used at most a few times.
+    /// The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.
     StreamRead = ffi::GL_STREAM_READ,
+
+    /// The data store contents will be modified once and used at most a few times.
+    /// The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
     StreamCopy = ffi::GL_STREAM_COPY,
 
+    /// The data store contents will be modified once and used many times.
+    /// The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
     StaticDraw = ffi::GL_STATIC_DRAW,
+
+    /// The data store contents will be modified once and used many times.
+    /// The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.
     StaticRead = ffi::GL_STATIC_READ,
+
+    /// The data store contents will be modified once and used many times.
+    /// The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
     StaticCopy = ffi::GL_STATIC_COPY,
 
+    /// The data store contents will be modified repeatedly and used many times.
+    /// The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
     DynamicDraw = ffi::GL_DYNAMIC_DRAW,
+
+    /// The data store contents will be modified repeatedly and used many times.
+    /// The data store contents are modified by reading data from the GL, and used to return that data when queried by the application.
     DynamicRead = ffi::GL_DYNAMIC_READ,
+
+    /// The data store contents will be modified repeatedly and used many times.
+    /// The data store contents are modified by reading data from the GL, and used as the source for GL drawing and image specification commands.
     DynamicCopy = ffi::GL_DYNAMIC_COPY,
 }
 
@@ -79,11 +103,10 @@ pub enum VertexAttribDataType {
     UnsignedByte = ffi::GL_UNSIGNED_BYTE,
     UnsignedShort = ffi::GL_UNSIGNED_SHORT,
     UnsignedInt = ffi::GL_UNSIGNED_INT,
-
     // Currently unsupported:
-    // GL_INT_2_10_10_10_REV 
-    // GL_UNSIGNED_INT_2_10_10_10_REV 
-    // GL_UNSIGNED_INT_10F_11F_11F_REV 
+    // GL_INT_2_10_10_10_REV
+    // GL_UNSIGNED_INT_2_10_10_10_REV
+    // GL_UNSIGNED_INT_10F_11F_11F_REV
 }
 
 #[repr(u32)]
@@ -106,7 +129,6 @@ pub enum TextureTarget {
 pub enum TextureSizedInternalFormat {
     Rgba8 = ffi::GL_RGBA8,
     Depth24Stencil8 = ffi::GL_DEPTH24_STENCIL8,
-
     //TODO Others are available...
 }
 
@@ -131,7 +153,7 @@ impl FramebufferAttachment {
 }
 
 bitflags! {
-    #[derive(Copy, Clone)]    
+    #[derive(Copy, Clone)]
     pub struct ClearMask: u32 {
         const COLOR_BUFFER = ffi::GL_COLOR_BUFFER_BIT;
         const DEPTH_BUFFER = ffi::GL_DEPTH_BUFFER_BIT;
@@ -194,7 +216,7 @@ pub unsafe fn link_program(program: Program) {
 
 pub unsafe fn use_program(program: Option<Program>) {
     let raw = program.map(|p| p.0.get()).unwrap_or(0);
-    
+
     ffi::glUseProgram(raw);
 }
 
@@ -235,12 +257,35 @@ pub unsafe fn create_named_buffer() -> Option<Buffer> {
     NonZeroU32::new(buffer).map(Buffer)
 }
 
+/// creates and initializes a buffer object's data store.
+///
+/// # Parameters
+/// - `buffer`: The buffer object to initialize.
+/// - `size`: The size of the buffer object's new data store.
+/// - `usage`: The usage pattern of the buffer object's data store.
+///
+/// # Notes
+/// Wraps [ffi::glNamedBufferData].
 pub unsafe fn named_buffer_data_size(buffer: Buffer, size: i32, usage: BufferUsage) {
     ffi::glNamedBufferData(buffer.0.get(), size as _, core::ptr::null(), usage as _);
 }
 
+/// creates and initializes a buffer object's data store.
+///
+/// # Parameters
+/// - `buffer`: The buffer object to initialize.
+/// - `data`: The data that will be copied into the buffer object's data store for initialization.
+/// - `usage`: The usage pattern of the buffer object's data store.
+///
+/// # Notes
+/// Wraps [ffi::glNamedBufferData].
 pub unsafe fn named_buffer_data_u8_slice(buffer: Buffer, data: &[u8], usage: BufferUsage) {
-    ffi::glNamedBufferData(buffer.0.get(), data.len() as _, data.as_ptr() as _, usage as _);
+    ffi::glNamedBufferData(
+        buffer.0.get(),
+        data.len() as _,
+        data.as_ptr() as _,
+        usage as _,
+    );
 }
 
 pub unsafe fn delete_buffer(buffer: Buffer) {
@@ -265,16 +310,46 @@ pub unsafe fn vertex_array_element_buffer(vertex_array: VertexArray, buffer: Buf
     ffi::glVertexArrayElementBuffer(vertex_array.0.get(), buffer.0.get());
 }
 
-pub unsafe fn vertex_array_vertex_buffer(vertex_array: VertexArray, binding_index: u32, buffer: Option<Buffer>, offset: i32, stride: i32) {
+pub unsafe fn vertex_array_vertex_buffer(
+    vertex_array: VertexArray,
+    binding_index: u32,
+    buffer: Option<Buffer>,
+    offset: i32,
+    stride: i32,
+) {
     let buffer = buffer.map_or(0, |b| b.0.get());
-    ffi::glVertexArrayVertexBuffer(vertex_array.0.get(), binding_index, buffer, offset as _, stride);
+    ffi::glVertexArrayVertexBuffer(
+        vertex_array.0.get(),
+        binding_index,
+        buffer,
+        offset as _,
+        stride,
+    );
 }
 
-pub unsafe fn vertex_array_attrib_format(vertex_array: VertexArray, index: u32, size: i32, data_type: VertexAttribDataType, normalized: bool, relative_offset: u32) {
-    ffi::glVertexArrayAttribFormat(vertex_array.0.get(), index, size, data_type as _, normalized as _, relative_offset as _);
+pub unsafe fn vertex_array_attrib_format(
+    vertex_array: VertexArray,
+    index: u32,
+    size: i32,
+    data_type: VertexAttribDataType,
+    normalized: bool,
+    relative_offset: u32,
+) {
+    ffi::glVertexArrayAttribFormat(
+        vertex_array.0.get(),
+        index,
+        size,
+        data_type as _,
+        normalized as _,
+        relative_offset as _,
+    );
 }
 
-pub unsafe fn vertex_array_attrib_binding(vertex_array: VertexArray, attrib_index: u32, binding_index: u32) {
+pub unsafe fn vertex_array_attrib_binding(
+    vertex_array: VertexArray,
+    attrib_index: u32,
+    binding_index: u32,
+) {
     ffi::glVertexArrayAttribBinding(vertex_array.0.get(), attrib_index, binding_index);
 }
 
@@ -288,8 +363,20 @@ pub unsafe fn delete_texture(texture: Texture) {
     ffi::glDeleteTextures(1, &texture.0.get());
 }
 
-pub unsafe fn texture_storage_2d(texture: Texture, levels: i32, internal_format: TextureSizedInternalFormat, width: i32, height: i32) {
-    ffi::glTextureStorage2D(texture.0.get(), levels as _, internal_format as _, width as _, height as _);
+pub unsafe fn texture_storage_2d(
+    texture: Texture,
+    levels: i32,
+    internal_format: TextureSizedInternalFormat,
+    width: i32,
+    height: i32,
+) {
+    ffi::glTextureStorage2D(
+        texture.0.get(),
+        levels as _,
+        internal_format as _,
+        width as _,
+        height as _,
+    );
 }
 
 pub unsafe fn create_framebuffer() -> Option<Framebuffer> {
@@ -302,8 +389,18 @@ pub unsafe fn delete_framebuffer(framebuffer: Framebuffer) {
     ffi::glDeleteFramebuffers(1, &framebuffer.0.get());
 }
 
-pub unsafe fn named_framebuffer_texture(framebuffer: Framebuffer, attachment: FramebufferAttachment, texture: Texture, level: i32) {
-    ffi::glNamedFramebufferTexture(framebuffer.0.get(), attachment.to_u32(), texture.0.get(), level as _);
+pub unsafe fn named_framebuffer_texture(
+    framebuffer: Framebuffer,
+    attachment: FramebufferAttachment,
+    texture: Texture,
+    level: i32,
+) {
+    ffi::glNamedFramebufferTexture(
+        framebuffer.0.get(),
+        attachment.to_u32(),
+        texture.0.get(),
+        level as _,
+    );
 }
 
 pub unsafe fn bind_vertex_array(vertex_array: VertexArray) {
@@ -317,6 +414,33 @@ pub unsafe fn get_uniform_location(program: Program, name: &CStr) -> UniformLoca
 
 pub unsafe fn program_uniform_1_f32(program: Program, location: UniformLocation, value: f32) {
     ffi::glProgramUniform1f(program.0.get(), location.0, value);
+}
+
+/// Specify the value of a uniform variable for a specified program object
+/// This function takes a single 4x4 matrix.
+///
+/// # Parameters
+/// - `program`: The program object to which the uniform variable belongs.
+/// - `location`: The location of the uniform variable.
+/// - `transpose`: Specifies whether to transpose the matrix.
+/// - `value`: The matrix value.
+///
+/// # Notes
+///
+/// Wraps [ffi::glProgramUniformMatrix4fv].
+pub unsafe fn program_uniform_1_mat4(
+    program: Program,
+    location: UniformLocation,
+    transpose: bool,
+    value: &[f32],
+) {
+    ffi::glProgramUniformMatrix4fv(
+        program.0.get(),
+        location.0,
+        1,
+        transpose as _,
+        value.as_ptr(),
+    );
 }
 
 pub unsafe fn clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
