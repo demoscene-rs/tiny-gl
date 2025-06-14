@@ -287,6 +287,40 @@ pub unsafe fn glDepthFunc(func: GLenum) {
     call_ptr_1arg(DEPTH_FUNC_PTR, func)
 }
 
+//TODO Should this move?
+pub type DEBUGPROC = unsafe extern "system" fn(
+    source: GLenum,
+    gl_type: GLenum,
+    id: GLuint,
+    severity: GLenum,
+    length: GLsizei,
+    message: *const GLchar,
+    user_param: *mut c_void,
+);
+
+pub unsafe fn glDebugMessageCallback(callback: DEBUGPROC, user_param: *const c_void) {
+    call_ptr_2arg(DEBUG_MESSAGE_CALLBACK_PTR, callback, user_param)
+}
+
+pub unsafe fn glDebugMessageControl(
+    source: GLenum,
+    gl_type: GLenum,
+    severity: GLenum,
+    count: GLsizei,
+    ids: *const GLuint,
+    enabled: GLboolean,
+) {
+    call_ptr_6arg(
+        DEBUG_MESSAGE_CONTROL_PTR,
+        source,
+        gl_type,
+        severity,
+        count,
+        ids,
+        enabled,
+    )
+}
+
 static mut CREATE_SHADER_PTR: *const c_void = core::ptr::null();
 static mut SHADER_SOURCE_PTR: *const c_void = core::ptr::null();
 static mut COMPILE_SHADER_PTR: *const c_void = core::ptr::null();
@@ -330,6 +364,8 @@ static mut ENABLE_PTR: *const c_void = core::ptr::null();
 static mut DISABLE_PTR: *const c_void = core::ptr::null();
 static mut DEPTH_MASK_PTR: *const c_void = core::ptr::null();
 static mut DEPTH_FUNC_PTR: *const c_void = core::ptr::null();
+static mut DEBUG_MESSAGE_CALLBACK_PTR: *const c_void = core::ptr::null();
+static mut DEBUG_MESSAGE_CONTROL_PTR: *const c_void = core::ptr::null();
 
 //TODO Implement for textures:
 // glTextureParameteri
@@ -389,4 +425,6 @@ pub unsafe fn load(get_proc_address: impl Fn(&CStr) -> *const c_void) {
     DISABLE_PTR = get_proc_address(c"glDisable");
     DEPTH_MASK_PTR = get_proc_address(c"glDepthMask");
     DEPTH_FUNC_PTR = get_proc_address(c"glDepthFunc");
+    DEBUG_MESSAGE_CALLBACK_PTR = get_proc_address(c"glDebugMessageCallback");
+    DEBUG_MESSAGE_CONTROL_PTR = get_proc_address(c"glDebugMessageControl");
 }

@@ -165,6 +165,7 @@ bitflags! {
 #[repr(u32)]
 pub enum Capability {
     DepthTest = ffi::GL_DEPTH_TEST,
+    DebugOutput = ffi::GL_DEBUG_OUTPUT,
 }
 
 #[derive(Copy, Clone)]
@@ -481,6 +482,7 @@ pub unsafe fn bind_vertex_array(vertex_array: VertexArray) {
     ffi::glBindVertexArray(vertex_array.0.get());
 }
 
+//TODO Return Option<UniformLocation> when raw == -1
 pub unsafe fn get_uniform_location(program: Program, name: &CStr) -> UniformLocation {
     let raw = ffi::glGetUniformLocation(program.0.get(), name.as_ptr() as _);
     UniformLocation(raw)

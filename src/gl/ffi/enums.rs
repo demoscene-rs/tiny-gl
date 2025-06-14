@@ -5,6 +5,11 @@ pub const GL_TRUE: GLenum = 1;
 
 pub const GL_DEPTH_TEST: GLenum = 0x0B71;
 
+pub const GL_DEBUG_OUTPUT: GLenum = 0x92E0;
+pub const GL_DONT_CARE: GLenum = 0x1100;
+
+pub const GL_DEBUG_SEVERITY_NOTIFICATION: GLenum = 0x826B;
+
 pub const GL_NEVER: GLenum = 0x0200;
 pub const GL_LESS: GLenum = 0x0201;
 pub const GL_EQUAL: GLenum = 0x0202;
