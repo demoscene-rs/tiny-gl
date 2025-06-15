@@ -35,6 +35,7 @@ pub enum ShaderType {
     Compute = ffi::GL_COMPUTE_SHADER,
 }
 
+#[derive(Copy, Clone)]
 #[repr(u32)]
 pub enum DrawMode {
     Points = ffi::GL_POINTS,
@@ -266,12 +267,18 @@ pub unsafe fn get_shader_info_log(shader: Shader) -> String {
     ffi::glGetShaderiv(shader.0.get(), ffi::GL_INFO_LOG_LENGTH, &mut length);
 
     if length > 0 {
-        let mut log = String::with_capacity(length as _);
+        use core::mem::MaybeUninit;
+
+        use alloc::vec::Vec;
+
+        let mut log: Vec<MaybeUninit<u8>> = Vec::with_capacity(length as _);
 
         ffi::glGetShaderInfoLog(shader.0.get(), length, &mut length, log.as_mut_ptr() as _);
 
-        log.truncate(length as _);
-        log
+        log.set_len(length as _);
+
+        let log: Vec<u8> = core::mem::transmute(log);
+        String::from_utf8_unchecked(log)
     } else {
         String::new()
     }
@@ -311,12 +318,18 @@ pub unsafe fn get_program_info_log(program: Program) -> String {
     ffi::glGetProgramiv(program.0.get(), ffi::GL_INFO_LOG_LENGTH, &mut length);
 
     if length > 0 {
-        let mut log = String::with_capacity(length as _);
+        use core::mem::MaybeUninit;
+
+        use alloc::vec::Vec;
+
+        let mut log: Vec<MaybeUninit<u8>> = Vec::with_capacity(length as _);
 
         ffi::glGetProgramInfoLog(program.0.get(), length, &mut length, log.as_mut_ptr() as _);
 
-        log.truncate(length as _);
-        log
+        log.set_len(length as _);
+
+        let log: Vec<u8> = core::mem::transmute(log);
+        String::from_utf8_unchecked(log)
     } else {
         String::new()
     }
@@ -533,3 +546,6 @@ pub unsafe fn viewport(x: i32, y: i32, width: i32, height: i32) {
 
 //TODO Make functions for all of these:
 // glNamedBufferStorage
+//
+// glDebugMessageCallback
+// glDebugMessageControl
